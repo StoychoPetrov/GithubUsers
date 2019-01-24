@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">GithubUsers</string>
+    <string name="name_colons">Name:</string>
+    <string name="email_colons">Email:</string>
+    <string name="company_colons">Company:</string>
+    <string name="followers_colons">Followers:</string>
+    <string name="blog_colons">Blog:</string>
+    <string name="location_colons">Location:</string>
+    <string name="connection_failed">Connection failed</string>
+</resources>
