@@ -1,10 +1,10 @@
-package com.example.githubusers
+package com.example.githubusers.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.squareup.picasso.Picasso
+import com.example.githubusers.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_user_details.*
@@ -13,10 +13,6 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 class UserDetailsActivity : AppCompatActivity() {
-
-    companion object {
-        const val TAG_HTTP_CONNECTION_FAILED_MESSAGE = "CONNECION_MESSAGE"          // TAG for logging connection problem with remote restFul API
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +47,9 @@ class UserDetailsActivity : AppCompatActivity() {
     }
 
     private fun processGetUserDetails(userModel: UserModel){            // receive data for user's details from restFul API and data is stored in UserModel
-        Picasso.get()
-            .load(userModel.avatar_url)
-            .placeholder(R.mipmap.ic_launcher_round)
-            .error(R.mipmap.ic_launcher_round)
-            .into(userImg)
 
+        val downloadImage = DownloadImage(this, R.mipmap.ic_launcher_round, R.mipmap.ic_launcher_round, true, userImg)
+        downloadImage.downloadImageFromUrl(userModel.avatar_url)
 
         // Set data from model in views
         userLoginTxt.text   =   userModel.login
@@ -69,7 +62,7 @@ class UserDetailsActivity : AppCompatActivity() {
     }
 
     private fun showError(message: String?){
-        Log.d(TAG_HTTP_CONNECTION_FAILED_MESSAGE, message)                                  // log message in console if there is some problem after the http request
+        Log.d(Utils.TAG_HTTP_CONNECTION_FAILED_MESSAGE, message)                                  // log message in console if there is some problem after the http request
         Toast.makeText(this, getString(R.string.connection_failed), Toast.LENGTH_SHORT).show()      // show Toast message in UI when connection problem was occur
     }
 }

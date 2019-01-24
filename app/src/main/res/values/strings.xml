@@ -7,4 +7,7 @@
     <string name="blog_colons">Blog:</string>
     <string name="location_colons">Location:</string>
     <string name="connection_failed">Connection failed</string>
+    
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

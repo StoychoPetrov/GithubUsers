@@ -1,4 +1,4 @@
-package com.example.githubusers
+package com.example.githubusers.adapters
 
 import android.content.Context
 import android.graphics.drawable.BitmapDrawable
@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.recyclerview.widget.RecyclerView
+import com.example.githubusers.DownloadImage
+import com.example.githubusers.R
+import com.example.githubusers.UserModel
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_user.view.*
@@ -24,7 +27,13 @@ class UsersAdapter(private val context: Context, private val users : ArrayList<U
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_user, parent, false))
+        return ViewHolder(
+            LayoutInflater.from(context).inflate(
+                R.layout.item_user,
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -33,27 +42,8 @@ class UsersAdapter(private val context: Context, private val users : ArrayList<U
 
         holder.userLogin?.text = userModel.login;
 
-        // Download image from url and set in imageview
-        Picasso.get()
-            .load(userModel.avatar_url)                 // set url where the image will be downloaded
-            .placeholder(R.mipmap.ic_launcher_round)    // set default image while the current image is downloading
-            .error(R.mipmap.ic_launcher_round)          // set image when download is failed
-            .fit()                                      // the image will fit the target (imageView)
-            .into(holder.userImg, object: Callback {
-                override fun onSuccess() {
-
-                    // Create drawable from downloaded image
-                    val bitmap                  = (holder.userImg.drawable as BitmapDrawable).bitmap;
-                    val circleBitmapDrawable    = RoundedBitmapDrawableFactory.create(context.resources, bitmap);
-
-                    circleBitmapDrawable.isCircular = true;         // set shape of drawable to be circle
-
-                    holder.userImg.setImageDrawable(circleBitmapDrawable)
-                }
-
-                override fun onError(e: Exception?) {
-                }
-            })
+        val downloadImage = DownloadImage(context, R.mipmap.ic_launcher_round, R.mipmap.ic_launcher_round, true, holder.userImg)
+        downloadImage.downloadImageFromUrl(userModel.avatar_url)
 
         holder.itemView.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {

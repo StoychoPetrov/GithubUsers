@@ -13,6 +13,6 @@ interface RestfulAPi {
 
     // Http "GET" request to url with path "/users/{login}" and user's login like param
     @GET("users/{login}")
-    fun getGitHubUserDetails(@Path("login") login: String) : Observable<UserModel>
+    fun getGitHubUserDetails(@Path("login") login: String?) : Observable<UserModel>
 
 }

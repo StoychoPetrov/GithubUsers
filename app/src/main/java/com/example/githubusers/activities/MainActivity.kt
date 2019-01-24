@@ -1,4 +1,4 @@
-package com.example.githubusers
+package com.example.githubusers.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -6,11 +6,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.githubusers.*
+import com.example.githubusers.adapters.UsersAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_user_details.*
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,7 +20,7 @@ class MainActivity : AppCompatActivity(), UsersAdapter.OnItemClickListener {
 
     private val                 users:          ArrayList<UserModel>    = ArrayList()
     private var                 disposable:     Disposable?             = null
-    private lateinit var        usersAdapter:   UsersAdapter
+    private lateinit var        usersAdapter: UsersAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,7 +82,7 @@ class MainActivity : AppCompatActivity(), UsersAdapter.OnItemClickListener {
     }
 
     private fun showError(errorMessage: String?){
-        Log.d("HTTP_REQUEST", errorMessage)
+        Log.d(Utils.TAG_HTTP_CONNECTION_FAILED_MESSAGE, errorMessage)                                  // log message in console if there is some problem after the http request
     }
 
     // Start new activity for user's details
