@@ -3,8 +3,7 @@ package com.example.githubusers.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.githubusers.*
-import com.example.githubusers.adapters.UsersAdapter
-import io.reactivex.disposables.Disposable
+import com.example.githubusers.fragments.UsersFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -23,5 +22,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Override back pressed from actionbar
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        supportActionBar!!.setDisplayHomeAsUpEnabled(false)     // hide back button in actionbar
+    }
+
+    // show back button in actionbar
+    fun showSearchBtn(){
+       supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    }
 }

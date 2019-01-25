@@ -1,18 +1,20 @@
-package com.example.githubusers
+package com.example.githubusers.fragments
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.transition.Explode
-import android.transition.Slide
 import android.transition.Transition
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.githubusers.*
 import com.example.githubusers.adapters.UsersAdapter
+import com.example.githubusers.globalClasses.ExplodeFadeOut
+import com.example.githubusers.globalClasses.SlideFadeOut
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -25,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class UsersFragment : Fragment(), UsersAdapter.OnItemClickListener {
 
 
-    private val                 usersArrayList:          ArrayList<UserModel>    = ArrayList()
+    private val                 usersArrayList: ArrayList<UserModel>    = ArrayList()
     private var                 disposable:     Disposable?             = null
     private lateinit var        usersAdapter:   UsersAdapter
 
@@ -48,7 +50,7 @@ class UsersFragment : Fragment(), UsersAdapter.OnItemClickListener {
 
     private fun setAdapter(){
 
-        usersAdapter                    = UsersAdapter(activity!!, usersArrayList, this)       // create adapter with empty list which will be notified when has received answer from server
+        usersAdapter                             = UsersAdapter(activity!!, usersArrayList, this)       // create adapter with empty list which will be notified when has received answer from server
 
         rootView.usersRecyclerView.layoutManager = LinearLayoutManager(activity)
         rootView.usersRecyclerView.adapter       = usersAdapter
@@ -87,30 +89,32 @@ class UsersFragment : Fragment(), UsersAdapter.OnItemClickListener {
     }
 
     // Process response from Http request for getting users
-    private  fun processGetUsersResponse(usersArrayList: ArrayList<UserModel>){
-        usersArrayList.addAll(usersArrayList)
+    private  fun processGetUsersResponse(users: ArrayList<UserModel>){
+        usersArrayList.addAll(users)
         usersAdapter.notifyDataSetChanged()             // refresh adapter with new data in the ArrayList
     }
 
     private fun showError(errorMessage: String?){
         Log.d(Utils.TAG_HTTP_CONNECTION_FAILED_MESSAGE, errorMessage)                                  // log message in console if there is some problem after the http request
+        Toast.makeText(activity, getString(R.string.connection_failed), Toast.LENGTH_SHORT).show()      // show Toast message in UI when connection problem was occur
     }
 
     override fun onItemClick(viewHolder: UsersAdapter.ViewHolder, userModel: UserModel) {
 
-        exitTransition  = getListFragmentExitTransition(viewHolder.itemView)
-        enterTransition = getDetailsEnterTransition(viewHolder.itemView)
+        exitTransition          = getListFragmentExitTransition(viewHolder.itemView)
+        enterTransition         = getDetailsEnterTransition(viewHolder.itemView)
 
         val userDetailsFragment = UserDetailsFragment()
         val bundle              = Bundle()
-        bundle.putString(Utils.INTENT_USER_LOGIN, userModel.login)
+
+        bundle.putParcelable(Utils.INTENT_USER, userModel)
         userDetailsFragment.arguments = bundle
 
         userDetailsFragment.enterTransition = enterTransition
 
         activity!!.supportFragmentManager
             .beginTransaction()
-            .replace(com.example.githubusers.R.id.root_view, userDetailsFragment)
+            .replace(R.id.root_view, userDetailsFragment)
             .addToBackStack(null)
             .addSharedElement(viewHolder.userImg    , viewHolder.userImg.transitionName)
             .addSharedElement(viewHolder.userLogin  , viewHolder.userLogin.transitionName)
@@ -126,7 +130,7 @@ class UsersFragment : Fragment(), UsersAdapter.OnItemClickListener {
 
         // Set Epic center to a imaginary horizontal full width line under the clicked item, so the explosion happens vertically away from it
         epicCenterRect.top = epicCenterRect.bottom
-        val exitTransition = Explode()
+        val exitTransition = ExplodeFadeOut()
 
         exitTransition.setPropagation(null)
 
@@ -145,7 +149,7 @@ class UsersFragment : Fragment(), UsersAdapter.OnItemClickListener {
         itemView.getGlobalVisibleRect(epicCenterRect)
         // Set Epic center to a imaginary horizontal full width line under the clicked item, so the explosion happens vertically away from it
         epicCenterRect.top = epicCenterRect.bottom
-        val enterTransition = Slide()
+        val enterTransition = SlideFadeOut()
 
         enterTransition.epicenterCallback = object : Transition.EpicenterCallback() {
             override fun onGetEpicenter(transition: Transition): Rect {

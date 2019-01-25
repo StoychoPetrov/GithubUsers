@@ -5,13 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.githubusers.DownloadImage
+import com.example.githubusers.globalClasses.DownloadImage
 import com.example.githubusers.R
 import com.example.githubusers.UserModel
 import kotlinx.android.synthetic.main.item_user.view.*
 
 
-class UsersAdapter(private val context: Context, private val users : ArrayList<UserModel>, private val onItemCLickListener: OnItemClickListener) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
+class UsersAdapter(private val context:                 Context,
+                   private val users :                  ArrayList<UserModel>,
+                   private val onItemCLickListener:     OnItemClickListener) : RecyclerView.Adapter<UsersAdapter.ViewHolder>() {
 
     // Interface for item click event
     interface OnItemClickListener {
@@ -34,11 +36,17 @@ class UsersAdapter(private val context: Context, private val users : ArrayList<U
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val userModel = users.get(position)
+        val userModel           = users.get(position)
 
-        holder.userLogin?.text = userModel.login;
+        holder.userLogin?.text  = userModel.login;
 
-        val downloadImage = DownloadImage(context, R.mipmap.ic_launcher_round, R.mipmap.ic_launcher_round, true, holder.userImg)
+        val downloadImage       = DownloadImage(
+            context,
+            R.mipmap.ic_launcher_round,
+            R.mipmap.ic_launcher_round,
+            true,
+            holder.userImg
+        )
         downloadImage.downloadImageFromUrl(userModel.avatar_url)
 
         holder.itemView.setOnClickListener(object : View.OnClickListener {

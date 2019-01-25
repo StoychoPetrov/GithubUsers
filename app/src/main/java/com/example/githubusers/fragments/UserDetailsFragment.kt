@@ -1,4 +1,4 @@
-package com.example.githubusers
+package com.example.githubusers.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,9 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.example.githubusers.*
+import com.example.githubusers.activities.MainActivity
+import com.example.githubusers.globalClasses.DownloadImage
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_user_details.*
+import kotlinx.android.synthetic.main.fragment_user_details.*
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -23,11 +26,28 @@ class UserDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val userLogin = arguments!!.getString(Utils.INTENT_USER_LOGIN)
-        getUserDetails(userLogin)        // send GET http request to GitHub about user's details with "login", which  is selected from previous activity
-
-        // Inflate the layout for this fragment
+            // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_user_details, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val userModel: UserModel? = arguments!!.getParcelable(Utils.INTENT_USER)
+
+        userLoginTxt.text   =   userModel!!.login
+        val downloadImage   = DownloadImage(
+            activity!!,
+            R.mipmap.ic_launcher_round,
+            R.mipmap.ic_launcher_round,
+            true,
+            userImg
+        )
+        downloadImage.downloadImageFromUrl(userModel.avatar_url)
+
+        getUserDetails(userModel.login)        // send GET http request to GitHub about user's details with "login", which  is selected from previous activity
+
+        (activity as MainActivity).showSearchBtn()
     }
 
     private fun getUserDetails(login: String?){
@@ -48,17 +68,15 @@ class UserDetailsFragment : Fragment() {
 
     private fun processGetUserDetails(userModel: UserModel){            // receive data for user's details from restFul API and data is stored in UserModel
 
-        val downloadImage = DownloadImage(activity!!, R.mipmap.ic_launcher_round, R.mipmap.ic_launcher_round, true, userImg)
-        downloadImage.downloadImageFromUrl(userModel.avatar_url)
-
-        // Set data from model in views
-        userLoginTxt.text   =   userModel.login
-        nameTxt.text        =   userModel.name
-        emailTxt.text       =   userModel.email
-        companyTxt.text     =   userModel.company
-        followersTxt.text   =   userModel.followers.toString()
-        blogTxt.text        =   userModel.blog
-        locationTxt.text    =   userModel.location
+        if(isAdded) {
+            // Set data from model in views
+            nameTxt.text = userModel.name
+            emailTxt.text = userModel.email
+            companyTxt.text = userModel.company
+            followersTxt.text = userModel.followers.toString()
+            blogTxt.text = userModel.blog
+            locationTxt.text = userModel.location
+        }
     }
 
     private fun showError(message: String?){
